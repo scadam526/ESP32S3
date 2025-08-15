@@ -7,6 +7,7 @@ Adafruit_ST7789 display = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 GFXcanvas16 canvas(240, 135);
 
 void setup() {
+  delay(100);
 
   // initialize display
   display.init(135, 240);
