@@ -16,9 +16,9 @@
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // ===== I2S Mic Pins =====
-#define I2S_WS    8    // LRCLK
-#define I2S_SD    5    // Data in from mic
-#define I2S_SCK   9    // BCLK
+#define I2S_WS    5
+#define I2S_SCK   6
+#define I2S_SD    9
 
 // ===== Button Pins =====
 #define BTN_UP    14   // D1
@@ -86,37 +86,46 @@ void draw_threshold_line() {
 }
 
 void setup() {
-  Serial.begin(115200);
+  // Serial.begin(115200);
   delay(100);
+  // Serial.println("Starting...");
+
+  // Buttons
+  pinMode(BTN_UP, INPUT_PULLDOWN);
+  pinMode(BTN_DOWN, INPUT_PULLDOWN);
 
   // TFT Init
   // SPI.begin(TFT_SCLK, -1, TFT_MOSI, -1);
+  // Serial.println("Initializing TFT...");
   tft.init(135, 240);
   tft.setRotation(3);
   tft.fillScreen(ST77XX_BLACK);
-
-  // Buttons
-  pinMode(BTN_UP, INPUT_PULLUP);
-  pinMode(BTN_DOWN, INPUT_PULLUP);
+  pinMode(TFT_BACKLITE, OUTPUT);
+  digitalWrite(TFT_BACKLITE, HIGH);
+  //  Serial.println("TFT Initialized");
 
   // I2S Init
+  // Serial.println("Initializing I2S...");
   i2s_install();
   i2s_setpin();
+  // Serial.println("Starting I2S...");
   i2s_start(I2S_NUM_0);
+  // Serial.println("I2S Started");
 
+  // Serial.println("Blanking screen");
   tft.setTextColor(ST77XX_WHITE);
   tft.setTextSize(1);
   tft.setCursor(10, 10);
-  tft.println("FFT Note Visualizer");
+  // tft.println("FFT Note Visualizer Ready");
 }
 
 void loop() {
   // Check button presses
-  if (digitalRead(BTN_UP) == LOW) {
+  if (digitalRead(BTN_UP) == HIGH) {
     FFT_THRESHOLD += THRESH_STEP;
     delay(150); // debounce
   }
-  if (digitalRead(BTN_DOWN) == LOW) {
+  if (digitalRead(BTN_DOWN) == HIGH) {
     FFT_THRESHOLD = max(0, FFT_THRESHOLD - THRESH_STEP);
     delay(150); // debounce
   }
@@ -159,8 +168,6 @@ void loop() {
   tft.setTextColor(ST77XX_GREEN);
   tft.setTextSize(1);
   tft.print(detectedNotes);
-  pinMode(TFT_BACKLITE, OUTPUT);
-  digitalWrite(TFT_BACKLITE, HIGH);
 
   delay(50);
 }
