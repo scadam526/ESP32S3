@@ -6,8 +6,13 @@
 static const char *TAG = "Filesystem";
 
 void app_main() {
-    vTaskDelay(1000);
-    ESP_LOGI(TAG, "Initializing SPIFFS...");
+    // vTaskDelay(1000);
+    spiffs_init();
+
+}
+
+void spiffs_init() {
+        ESP_LOGI(TAG, "Initializing SPIFFS...");
     esp_vfs_spiffs_conf_t config = {
         .base_path = "/storage",
         .partition_label = NULL,
